@@ -96,8 +96,75 @@ public class Player {
             }
         }
         return true;
+
+    // function to dicard snon prefereed hand 
+    // Throws away a card that isn't the one we want
+    public synchronized Card discardNonPreferredCard() {
+        if (hand.isEmpty()) {
+            throw new IllegalStateException("can't discard from empty hand");
+        }
+
+        int size = hand.size();
+        
+        // Loop around starting from discardCursor
+        for (int i = 0; i < size; i++) {
+            int idx = (discardCursor + i) % size;
+            Card candidate = hand.get(idx);
+
+            //  checks if number is our preffered number if not it get rid of it 
+            if (candidate.getValue() != getPreferredValue()) {
+                Card removed = hand.remove(idx);
+                
+                // update cursor, startig next search at th eposition after ht e removed card 
+                // removing cards immediately shifts cards to the left mainting original order 
+                if (hand.isEmpty()) {
+                    discardCursor = 0;
+                } else {
+                    discardCursor = idx % hand.size();
+                }
+
+                return removed;
+            }
+        }
+        
+
+        // If we get here, it means all cards in hand are our preferred value... 
+        // which shouldn't happen unless we already won, but just in case:
+        throw new IllegalStateException("Player " + playerNumber + " has nothing to discard!!");
     }
 
-    //Todo 
 
-}
+    // synchronise funtion 
+    // adds a drawn card and  then removes  a non preffered  card ensuring that a player always ends up with four cards  
+    // makes operations on players hand atomic  with all  othher methods affecting playes hand 
+    //
+    public synchronized Card processDrawnCard(Card drawnCard) {
+        if (hand.size() != 4) {
+            // we should always start a turn with 4 cards
+            throw new IllegalStateException("Wait, hand size isn't 4 at start of turn?");
+        }
+
+        addCard(drawnCard);
+        Card thrownAway = discardNonPreferredCard();
+
+        // double check we are back to 4 cards
+        if (hand.size() != 4) {
+            System.out.println("ERROR: Hand size is incorrect  after turn processing!");
+        }
+
+        return thrownAway;
+    }
+    
+    // output  screen for the  cards  sperated by spaces 
+    // returns  values in the crrent order for example a player has hand with 1287  it will return 1 2 8 7 
+
+    public synchronized String handAsString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < hand.size(); i++) {
+            if (i > 0) {
+                sb.append(" ");
+            }
+            sb.append(hand.get(i).getValue());
+        }
+        return sb.toString();
+    }
