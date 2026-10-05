@@ -10,8 +10,16 @@ public class Card {
     private final int value;
 
     //Card constructor (run when make new card)
+    //Card values can not be negative!
     public Card(int value) {
+        if(value <0){
+            throw new IllegalArgumentException(
+                "Card value can not be negative!"
+            );
+        }
+
         this.value = value;
+
     }
 
     //Allows the value to be accessible from another class

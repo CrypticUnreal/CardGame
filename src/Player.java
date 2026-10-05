@@ -15,6 +15,13 @@ public class Player {
     private final int playerNumber;
     // keeping the hand private so other threads don't mess with it directly
     private final List<Card> hand;
+
+    // the deck that the player draws from
+    private CardDeck drawDeck;
+    
+    // the deck that the player discards cards into
+    private CardDeck discardDeck;
+
     
     // keeps track of where we were when choosing what to throw away last time preventing from always favoruing same  card 
     private int discardCursor;
@@ -42,11 +49,30 @@ public class Player {
             throw new IllegalArgumentException("Need exactly 4 cards to start!");
         }
 
+
+
+        
         // just loop through and add them using our existing method
         for (Card c : initialHand) {
             addCard(c);
         }
     }
+
+    // Constructor to create player and connect them to input and output decks
+
+    public Player(int playerNumber, CardDeck drawDeck, CardDeck discardDeck){
+        // Create player first
+        this(playerNumber);
+
+        // Player must always have decks to draw and discard into
+        this.drawDeck = Objects.requireNonNull(
+            drawDeck, "Draw deck can not be null");
+
+        //discard deck
+        this.discardDeck = Objects.requireNonNull(
+            discardDeck, "Discard deck can not be null");
+    }
+
    // helper to get player number 
     public int getPlayerNumber() {
         return playerNumber;
@@ -96,6 +122,7 @@ public class Player {
             }
         }
         return true;
+    }
 
     // function to dicard snon prefereed hand 
     // Throws away a card that isn't the one we want
@@ -133,7 +160,6 @@ public class Player {
         throw new IllegalStateException("Player " + playerNumber + " has nothing to discard!!");
     }
 
-
     // synchronise funtion 
     // adds a drawn card and  then removes  a non preffered  card ensuring that a player always ends up with four cards  
     // makes operations on players hand atomic  with all  othher methods affecting playes hand 
@@ -154,6 +180,18 @@ public class Player {
 
         return thrownAway;
     }
+
+    //Perform one complete player turn, draw from player's draw deck, process card, choose one to discard, add discard to next deck.
+    public void performTurn() {
+        //take card from front of deck
+        Card drawnCard = drawDeck.drawCard();
+
+        //add to hand and pick discarded card
+        Card discardedCard = processDrawnCard(drawnCard);
+
+        //Put unwanted card to back of next deck
+        discardDeck.addCard(discardedCard);
+    }
     
     // output  screen for the  cards  sperated by spaces 
     // returns  values in the crrent order for example a player has hand with 1287  it will return 1 2 8 7 
@@ -168,3 +206,4 @@ public class Player {
         }
         return sb.toString();
     }
+}

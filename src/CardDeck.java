@@ -33,11 +33,25 @@ public class CardDeck {
     (synchronised) protects the deck from being modified by 2 players at once, makes one wait.
      */
     public synchronized void addCard(Card card) {
+
+        //deck can not contain null value
+        if(card == null){
+            throw new NullPointerException(
+                "Can not add a null card to the deck."
+            );
+
+        }
+
         cards.addLast(card);
     }
 
     //Remove and return card from Front
     public synchronized Card drawCard() {
+        // handle empty deck
+        if (cards.isEmpty()){
+            throw new IllegalStateException("Can not draw from an empty deck."
+            );
+        }
         return cards.removeFirst();
     }
 
