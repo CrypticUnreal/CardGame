@@ -121,3 +121,66 @@ public class PlayerTest {
         assertEquals(Arrays.asList(2, 3, 4, 5), discarded);
         assertEquals(4, p.getHandSize());
     }
+
+    @Test
+    void completedTurnAlwaysLeavesFourCards() {
+        Player p = new Player(4, cards(4, 1, 2, 3));
+
+        // run a bunch of turns just to stress test the size constraint
+        // every completed action should leave  4 cards 
+        for (int i = 5; i < 50; i++) {
+            p.processDrawnCard(new Card(i));
+            assertEquals(4, p.getHandSize());
+        }
+    }
+     // checks the player cannot  start playing unless they have four cards 
+    @Test
+    void processingTurnRejectsIncorrectStartingHandSize() {
+        Player p = new Player(1);
+        p.addCard(new Card(1)); // only 1 card, should fail
+
+        assertThrows(IllegalStateException.class, () -> {
+            p.processDrawnCard(new Card(2));
+        });
+    }
+    
+    @Test
+    void discardingFailsWhenEveryCardIsPreferred() {
+        Player p = new Player(3, cards(3, 3, 3, 3));
+
+        assertTrue(p.hasWinningHand());
+
+        // If hand is all preferred cards, trying to discard should  throw exception
+        assertThrows(IllegalStateException.class, () -> {
+            p.discardNonPreferredCard();
+        });
+    }
+
+    @Test
+    void returnedHandCannotModifyInternalState() {
+        Player p = new Player(1, cards(1, 2, 3, 4));
+
+        List<Card> exposedHand = p.getHand();
+
+        // Trying to add a card to the returned list should be rejectedp
+        assertThrows(UnsupportedOperationException.class, () -> {
+            exposedHand.add(new Card(5));
+        });
+            // confirm rplayers real hand remains unchanged 
+        assertEquals(4, p.getHandSize());
+        assertEquals("1 2 3 4", p.handAsString());
+    }
+
+    @Test
+    void nullCardsAreRejected() {
+        Player p = new Player(1);
+        //A null card must not be added directly to the players hand 
+        assertThrows(NullPointerException.class, () -> {
+            p.addCard(null);
+        });
+         // a null drawn card is also rejected 
+        assertThrows(NullPointerException.class, () -> {
+            p.processDrawnCard(null);
+        });
+    }
+}
