@@ -163,8 +163,13 @@ public class Player {
     // synchronise funtion 
     // adds a drawn card and  then removes  a non preffered  card ensuring that a player always ends up with four cards  
     // makes operations on players hand atomic  with all  othher methods affecting playes hand 
-    //
+    //having an error with  testing because  checks are in different order need to  change this  to check  if card is null first  then check if  has four cards 
     public synchronized Card processDrawnCard(Card drawnCard) {
+
+        // check if drawn card  is null 
+        if ( drawnCard == null ){
+            throw new NullPointerException(" card cannot be null");
+        }
         if (hand.size() != 4) {
             // we should always start a turn with 4 cards
             throw new IllegalStateException("Wait, hand size isn't 4 at start of turn?");
