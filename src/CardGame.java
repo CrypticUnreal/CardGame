@@ -18,9 +18,7 @@ public class CardGame {
         }
 
         // create all players and connect them to correct draw and discard
-        public static List<Player> createPlayers(
-            int numberOfPlayers,
-            List<CardDeck> decks) {
+        public static List<Player> createPlayers(int numberOfPlayers,List<CardDeck> decks, GameState gameState) {
 
         List<Player> players = new ArrayList<>();
 
@@ -39,6 +37,49 @@ public class CardGame {
 
         }
         return players;
+         }
+
+
+         //OLD VERSION KEEP FOR TESTS!!
+
+         
+
+
+        
+
+         public static List<Player> createPlayers(int numberOfPlayers, List<CardDeck> decks){
+            GameState gameState = new GameState();
+
+            return createPlayers(numberOfPlayers, decks, gameState);
+         }
+
+         //one thread for every player
+         public static List<Thread> startPlayerThreads(List<Player> players){
+            List<Thread> threads = new ArrayList<>();
+
+            for(Player player : players){
+                Thread thread = new Thread(player, "Player - " + player.getPlayerNumber());
+
+                threads.add(thread);
+                thread.start();
             }
+            return threads;
+         }
+
+         //WAIT until every thread has stopped
+         public static void waitForPlayerThreads(List<Thread>threads) {
+            for (Thread thread: threads){
+                try{
+                    thread.join();
+
+                }catch (InterruptedException e){
+                    Thread.currentThread().interrupt();
+
+                    throw new IllegalStateException("Interrupted while waiting for players", e);
+                }
+            }
+             
+         }
+
 
     }
