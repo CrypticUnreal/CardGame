@@ -6,7 +6,7 @@ import java.util.Objects;
 // TODO: week 2  objectives   player fiel  should implement player hand  management  and the players discard strategy 
 //  
 // we using basic synchronised aproach to prevent  a player from having  more than 5  cards at one time 
-public class Player {
+public class Player implements Runnable {
 
     public static final int HAND_SIZE = 4;// made final cause its contant based on game rules 
 
@@ -21,6 +21,11 @@ public class Player {
     
     // the deck that the player discards cards into
     private CardDeck discardDeck;
+
+
+
+    //Shared state to let all players know if game finished and who wins
+    private GameState gameState;
 
     
     // keeps track of where we were when choosing what to throw away last time preventing from always favoruing same  card 
@@ -73,6 +78,17 @@ public class Player {
             discardDeck, "Discard deck can not be null");
     }
 
+
+    //Create player connected to 2 decks and shared game state
+
+    public Player (int playerNumber, CardDeck drawDeck, CardDeck discardDeck, GameState gameState){
+        this(playerNumber, drawDeck, discardDeck);
+        this.gameState = Objects.requireNonNull(gameState, "Game state can't be null");
+
+    }
+
+
+
    // helper to get player number 
     public int getPlayerNumber() {
         return playerNumber;
@@ -123,6 +139,21 @@ public class Player {
         }
         return true;
     }
+
+    //check if player has the winning hand
+    //If so then declare winner, true only if first
+    public boolean checkAndDeclareWinner(){
+        if(!hasWinningHand()){
+            return false;
+        }
+
+        if (gameState == null){
+            throw new IllegalStateException("Player not connected to game state");
+        }
+
+        return gameState.declareWinner(playerNumber);
+    }
+
 
     // function to dicard snon prefereed hand 
     // Throws away a card that isn't the one we want
@@ -188,16 +219,125 @@ public class Player {
 
     //Perform one complete player turn, draw from player's draw deck, process card, choose one to discard, add discard to next deck.
     public void performTurn() {
+
+        if(!tryPerformTurn()){
+            throw new IllegalStateException("Turn can not be perfromed");
+        }
+
+
         //take card from front of deck
-        Card drawnCard = drawDeck.drawCard();
+        //Card drawnCard = drawDeck.drawCard();
 
         //add to hand and pick discarded card
-        Card discardedCard = processDrawnCard(drawnCard);
+        //Card discardedCard = processDrawnCard(drawnCard);
 
         //Put unwanted card to back of next deck
-        discardDeck.addCard(discardedCard);
+        //discardDeck.addCard(discardedCard);
     }
     
+    //Try perform a complete draw and discard
+    //if draw deck is empty it doesn't crash, it returns false
+    private boolean tryPerformTurn(){
+        if (drawDeck == null || discardDeck == null){
+            throw new IllegalStateException("Player not connected to both decks");
+        }
+
+        //Turn uses 2 SHARED decks.
+        //lock 1st deck first to stop deadlock
+        CardDeck firstDeck;
+        CardDeck secondDeck;
+
+        if (drawDeck.getDeckNumber()<= discardDeck.getDeckNumber()){
+            firstDeck = drawDeck;
+            secondDeck = discardDeck;
+
+        }
+        else{
+            firstDeck = discardDeck;
+            secondDeck = drawDeck;
+
+        }
+
+        synchronized (firstDeck){
+            synchronized (secondDeck) {
+                //Someone might have won
+                if (gameState != null && gameState.isGameOver()){
+                    return false;
+
+                }
+
+                //deck can be temporarily empty as not discarded into yet
+                //DON'T call drawCard() in that situation
+
+                if(drawDeck.size() == 0){
+                    return false;
+                }
+
+                //DRAW CARD
+                Card drawnCard = drawDeck.drawCard();
+
+                //process hand and pick discard
+                Card discardedCard = processDrawnCard(drawnCard);
+
+                //DISCARD
+                discardDeck.addCard(discardedCard);
+
+                return true;
+                
+            }
+        }
+
+    }
+
+
+    //Run player continuously
+    @Override 
+    public void run(){
+        //player must be connected to game state
+        if (gameState == null){
+            throw new IllegalStateException("Player not connected to game state");
+        }
+
+        if(drawDeck == null || discardDeck == null ){
+            throw new IllegalStateException("Player not connected to both decks");
+
+        }
+
+        //check player already won
+        if(checkAndDeclareWinner()){
+            return;
+        }
+
+        //keep taking turns until someone wins
+        while(!gameState.isGameOver()){
+            boolean turnCompleted = tryPerformTurn();
+
+            //Empty deck, do not crash
+            if(!turnCompleted){
+                if(gameState.isGameOver()){
+                    break;
+                }
+
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+                continue;
+            }
+
+
+            //check turn has winning hand
+            if(checkAndDeclareWinner()){
+                return;
+            }
+
+        }
+    }
+
+
+
     // output  screen for the  cards  sperated by spaces 
     // returns  values in the crrent order for example a player has hand with 1287  it will return 1 2 8 7 
 
