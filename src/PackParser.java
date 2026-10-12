@@ -48,19 +48,15 @@ public class PackParser {
 
                 // Reject  a line if its empty 
                 if (line.isEmpty()) {
-                    throw new IllegalArgumentException(
-                        "Empty line at line " + lineNumber
-                    );
+                    throw new IllegalArgumentException("Empty line at line " + lineNumber);
                 }
-
+                 // ensure valid integer
                 int value;
 
                 try {
                     value = Integer.parseInt(line);
                 } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException(
-                        "Invalid card value at line " + lineNumber
-                    );
+                    throw new IllegalArgumentException("Invalid card value at line " + lineNumber);
                 }
 
                 //make sure card values are  non-negative.

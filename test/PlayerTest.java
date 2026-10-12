@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+// TODO: Aadd comments to all tests explaining what they do 
+
 
 // Test suite for the Player class.  testing  players  hand and discard strategy 
 // Added these tests to make sure the discard rotation and hand logic aren't totally broken.
