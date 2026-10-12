@@ -42,7 +42,7 @@ public class PackParserTest{
 
          PackParser  parser = new PackParser(file.toString());
          
-         assertThrows(IllegalArgumentException.class,()->{parser.readPack(1)});
+         assertThrows(IllegalArgumentException.class,()->{parser.readPack(1);});
          }
 
     // test   for all  values to be non negative 
@@ -52,7 +52,7 @@ public class PackParserTest{
         
         PackParser  parser = new PackParser(file.toString());
 
-        assertThrows(IllegalArgumentException.class,()->{parser.readPack(1)});
+        assertThrows(IllegalArgumentException.class,()->{parser.readPack(1);});
          }
     
     // test  to check packs  do not exceed  8n cards  where n is number of players 
