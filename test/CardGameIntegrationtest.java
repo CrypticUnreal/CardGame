@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-public class CardGameIntegrationTest {
+public class CardGameIntegrationtest {
 
     // TODO: 
     //  number of decks should be equal to number of players 
