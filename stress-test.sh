@@ -1,7 +1,7 @@
 
 
 # Quick stress-test script to see if the game hangs or deadlocks.
-
+TODO: add correct path once create  main 
 RUNS=100
 PLAYER_COUNT=${1:-3}  # default to 3 players if nothing passed in
 RESULTS_FILE="stress-test-results.txt"
@@ -13,7 +13,7 @@ FAILED=0
 echo "Starting stress tests..."
 echo "Players: $PLAYER_COUNT"
 echo "Runs: $RUNS"
-
+ 
 # init the log file
 echo "Stress Test Results" > "$RESULTS_FILE"
 echo "Players: $PLAYER_COUNT" >> "$RESULTS_FILE"
@@ -27,7 +27,7 @@ for ((i = 1; i <= RUNS; i++)); do
 
 
 
-    echo "Game $i: NOT RUN (stub)" >> "$RESULTS_FILE"
+    echo "Till we create Main" >> "$RESULTS_FILE"
 
 done
 
