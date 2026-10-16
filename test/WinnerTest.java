@@ -1,7 +1,7 @@
 //test whether  every completed game declares exaclty one winner 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 public class WinnerTest {
@@ -12,15 +12,20 @@ public class WinnerTest {
         GameState gameState = new GameState();
 
         // just picking player 1 as a dummy winner for the test
-        Player winner = new Player(1);
+        assertTrue(gameState.declareWinner(1));
 
-        // Record the winner.
-        gameState.declareWinner(winner);
+
+        // lets say player 2 tries to declare after
+        assertFalse(gameState.declareWinner(2));
+
+        // game should be finished
+        assertTrue(gameState.isGameOver());
+
+
+        // Player 1 should be the only winner
+        assertEquals(1,gameState.getWinner());
         
-     
-
-        // Exactly one winner should be recorded.
-        assertEquals(1, gameState.getWinnerCount());
+    
         
        
     }

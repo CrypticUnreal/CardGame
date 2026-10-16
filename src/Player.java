@@ -30,6 +30,9 @@ public class Player implements Runnable {
     
     // keeps track of where we were when choosing what to throw away last time preventing from always favoruing same  card 
     private int discardCursor;
+
+    // record every draw and discard made
+    private final StringBuilder turnLog;
      
 
      //function to create  an empty player 
@@ -41,6 +44,8 @@ public class Player implements Runnable {
         this.playerNumber = playerNumber;
         this.hand = new ArrayList<>(HAND_SIZE + 1); // sometimes holds 5 before dropping
         this.discardCursor = 0;
+
+        this.turnLog = new StringBuilder();
     }
     //todo : deal with  player holding more than 4 cards 
 
@@ -282,6 +287,9 @@ public class Player implements Runnable {
                 //DISCARD
                 discardDeck.addCard(discardedCard);
 
+                //record what happened this turn
+                recordTurn(drawnCard, discardedCard);
+
                 return true;
                 
             }
@@ -334,6 +342,20 @@ public class Player implements Runnable {
             }
 
         }
+    }
+
+
+    //record turn
+    private synchronized void recordTurn(Card drawnCard, Card discardedCard){
+        
+        turnLog.append("player " + playerNumber + "draws a " + drawnCard.getValue() + " from deck " + drawDeck.getDeckNumber() + System.lineSeparator());
+        
+        turnLog.append("player " + playerNumber + " discards a " + discardedCard.getValue() + " to deck " + discardDeck.getDeckNumber() + System.lineSeparator());
+
+    }
+
+    public synchronized String getTurnLog() {
+        return turnLog.toString();
     }
 
 

@@ -1,8 +1,7 @@
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import org.junit.jupiter.api.Test;
 
 public class FinalHandSizeTest {
@@ -22,7 +21,29 @@ public class FinalHandSizeTest {
             numberOfPlayers, decks, gameState
         );
 
+
+        //give each player cards
+
+        //player 1 gets winning hand
+        players.get(0).addCard(new Card(1));
+        players.get(0).addCard(new Card(1));
+        players.get(0).addCard(new Card(1));
+        players.get(0).addCard(new Card(1));
+
+        //player 2 gets hand
+        players.get(1).addCard(new Card(2));
+        players.get(1).addCard(new Card(3));
+        players.get(1).addCard(new Card(1));
+        players.get(1).addCard(new Card(4));
+
+        //player 3 gets hand
+        players.get(2).addCard(new Card(1));
+        players.get(2).addCard(new Card(3));
+        players.get(2).addCard(new Card(2));
+        players.get(2).addCard(new Card(1));
         
+
+        //Start all the player threads
         List<Thread> threads = CardGame.startPlayerThreads(players);
 
         
