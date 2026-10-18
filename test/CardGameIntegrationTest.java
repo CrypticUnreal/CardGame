@@ -71,4 +71,54 @@ public class CardGameIntegrationTest {
         
 
     }
+
+
+    @Test
+    void playerTurnMovesCardBetweenCorrectDecks() {
+
+        int numPlayers = 3; 
+
+        List<CardDeck> decks = CardGame.createDecks(numPlayers);
+        List<Player> players = CardGame.createPlayers(numPlayers, decks);
+
+    // Give each player four cards
+        for (int i = 0; i < numPlayers; i++) {
+            for (int j = 1; j <= 4; j++) {
+                players.get(i).addCard(new Card(j));
+            }
+        }
+
+    // Give each deck four cards
+        for (CardDeck deck : decks) {
+            for (int i = 1; i <= 4; i++) {
+                deck.addCard(new Card(i + 10));
+            }
+        }
+
+    // Player 1 draws from deck 1 and discards into deck 2
+        Player p1 = players.get(0);
+        p1.performTurn();
+
+    // checking deck sizes after the turn
+        int finalDeck0Size = decks.get(0).size();
+        assertEquals(
+            3,
+            finalDeck0Size,
+            "Deck 1 should have one fewer card after Player 1 draws."
+        );
+
+        int finalDeck1Size = decks.get(1).size();
+        assertEquals(
+            5,
+            finalDeck1Size,
+            "Deck 2 should have one extra card after Player 1 discards."
+        );
+
+        int handSize = p1.getHand().size();
+        assertEquals(
+            4,
+            handSize,
+            "Player 1 should still have four cards."
+        );
+}
 }
