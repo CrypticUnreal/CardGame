@@ -23,14 +23,18 @@ public class CardConservationTest {
 
         for (int i = 0; i < numberOfPlayers; i++) {
 
-            List<Card> hand = new ArrayList<>();
+            // Connect the player to their draw and discard decks
+            Player player = new Player(
+                i + 1,
+                decks.get(i),
+                decks.get((i + 1) % numberOfPlayers)
+            );
 
-            // filling up hands for the test
+            // Give each player four cards
             for (int j = 0; j < 4; j++) {
-                hand.add(new Card(i + j));
+                player.addCard(new Card(i + j + 1));
             }
 
-            Player player = new Player(i + 1, hand);
             players.add(player);
         }
 
@@ -44,27 +48,51 @@ public class CardConservationTest {
             }
         }
 
-        // Count every card in the players' hands.
-        int totalCards = 0;
+        // Count every card in the players' hands. efore player takes a turn 
+        int cardsBefore = 0;
 
         for (Player player : players) {
-            totalCards += player.getHand().size();
+            cardsBefore += player.getHand().size();
         }
 
         // Count every card in the decks.
       
         for (CardDeck deck : decks) {
-            // adding deck size to total
-            totalCards += deck.size();
+            cardsBefore += deck.size();
         }
 
         // The total must equal the original number of cards.
         assertEquals(
-                expectedTotalCards,
-                totalCards,
-                "Cards must not be lost or duplicated."
+            expectedTotalCards,
+            cardsBefore,
+            "There should be 24 cards before any turns."
         );
         
-        
+        // Player 1 performs one turn
+        players.get(0).performTurn();
+        // Count all cards after the turn
+        int cardsAfter = 0;
+
+        for (Player player : players) {
+            cardsAfter += player.getHand().size();
+        }
+
+        for (CardDeck deck : decks) {
+            cardsAfter += deck.size();
+        }
+
+        // Check that no cards were lost or duplicated
+        assertEquals(
+        cardsBefore,
+        cardsAfter,
+        "Total number of cards must stay the same after a turn."
+        );
+
+        // Check that Player 1 still has four cards
+        assertEquals(
+          4,
+         players.get(0).getHand().size(),
+         "Player 1 must still have four cards after a turn."
+        );
     }
 }
