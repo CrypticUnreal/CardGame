@@ -1,4 +1,6 @@
 import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -41,13 +43,24 @@ public class FinalHandSizeTest {
         players.get(2).addCard(new Card(3));
         players.get(2).addCard(new Card(2));
         players.get(2).addCard(new Card(1));
+
+        // Give each deck four cards
+    for (CardDeck deck : decks) {
+        for (int i = 1; i <= 4; i++) {
+        deck.addCard(new Card(i));
+        }
+    }
         
 
         //Start all the player threads
         List<Thread> threads = CardGame.startPlayerThreads(players);
 
-        
-        CardGame.waitForPlayerThreads(threads);
+
+        //test fails if waiting for threads takes longer than 5 seconds 
+        assertTimeoutPreemptively(
+            Duration.ofSeconds(5),
+            () -> CardGame.waitForPlayerThreads(threads)
+        );
 
         assertFalse(players.isEmpty(), "The game should have players.");
 
