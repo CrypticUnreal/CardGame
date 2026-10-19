@@ -248,7 +248,7 @@ public class CardGame {
 
                     content.append("player " + playerNumber + " exits" + System.lineSeparator());
 
-                    content.append("player " + playerNumber + "final hand: " + player.handAsString() + System.lineSeparator() );
+                    content.append("player " + playerNumber + " final hand: " + player.handAsString() + System.lineSeparator() );
 
                     output.writePlayerOutput(playerNumber, content.toString());
                     }
