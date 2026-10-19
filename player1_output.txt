@@ -1,5 +1,4 @@
-player 1 initial hand: 1 1 1 2
-player 1discards a 2 to deck 2
+player 1 initial hand 1 1 1 1
 player 1 wins
 player 1 exits
-player 1final hand: 1 1 1 1
+player 1 final hand: 1 1 1 1

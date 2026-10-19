@@ -234,7 +234,7 @@ public class CardGame {
 
                     StringBuilder content = new StringBuilder();
                     
-                    content.append("player " + playerNumber + " initial hand: " + initialHands.get(i) + System.lineSeparator());
+                    content.append("player " + playerNumber + " initial hand " + initialHands.get(i) + System.lineSeparator());
 
                     content.append(player.getTurnLog());
 
@@ -256,8 +256,7 @@ public class CardGame {
 
                     //deck files
                     for (CardDeck deck: decks){
-                        String content = "deck " + deck.getDeckNumber() + " contents: " + cardsAsString(deck.getCards()) + System.lineSeparator();
-
+                        String content = "deck" + deck.getDeckNumber() + " contents: " + cardsAsString(deck.getCards()) + System.lineSeparator();
                         output.writeDeckOutput( deck.getDeckNumber(), content);
 
                     }

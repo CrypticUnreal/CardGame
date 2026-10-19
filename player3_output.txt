@@ -1,4 +1,4 @@
-player 3 initial hand: 3 4 5 6
+player 3 initial hand 3 4 2 4
 player 3 has been informed that player 1 has won
 player 3 exits
-player 3final hand: 3 4 5 6
+player 3 final hand: 3 4 2 4
