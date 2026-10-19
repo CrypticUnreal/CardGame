@@ -348,7 +348,7 @@ public class Player implements Runnable {
     //record turn
     private synchronized void recordTurn(Card drawnCard, Card discardedCard){
         
-        turnLog.append("player " + playerNumber + "draws a " + drawnCard.getValue() + " from deck " + drawDeck.getDeckNumber() + System.lineSeparator());
+        turnLog.append("player " + playerNumber + " draws a " + drawnCard.getValue() + " from deck " + drawDeck.getDeckNumber() + System.lineSeparator());
         
         turnLog.append("player " + playerNumber + " discards a " + discardedCard.getValue() + " to deck " + discardDeck.getDeckNumber() + System.lineSeparator());
 
